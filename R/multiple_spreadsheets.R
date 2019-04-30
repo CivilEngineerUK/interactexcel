@@ -2,13 +2,22 @@
 #' 
 #' Make changes to a spreadsheet and extract the outputs from 
 #'   specified cells using a run matrix as an input.
-#'   
+#'
+#' @param run_matrix a file path to the input matrix OR the matrix itself
+#' @param file_location the full path of the calculation spreadsheet
+#' @param sheet the sheet in the spreadsheet in which you wish to change values
+#' @param folder the folder to save the results to
+#' @param save_location if \code{NULL} then the spreadsheets will not be saved but
+#'   the final results will be returned as a data frame still
+#' @param round_dp the number of significant figures to round to. Defaults to 3
+#' @export
 use_run_matrix <- 
   function(
     run_matrix = NULL, 
     file_location = NULL, 
     sheet = 'Sheet1',
     folder = 'results',
+    save_location = NULL,
     round_dp = 3) {
     
     library(RDCOMClient)
@@ -41,16 +50,18 @@ use_run_matrix <-
     for (i in 1:(nrow(run_matrix) - 1)) {  
       
       # create name for calculation spreadsheet to be saved to
-      calc_name <- 
-        stringi::stri_split_fixed(
-          file_location,
-          '/')[[1]]
-      
-      calculation_name <- 
-        paste0(folder,
+      if (!is.null(save_location)) {
+        calc_name <- 
           stringi::stri_split_fixed(
-            calc_name[length(calc_name)], '.xls')[[1]][1], 
-          '_LC', LC[i], '.xls')
+            file_location,
+            '/')[[1]]
+        
+        calculation_name <- 
+          paste0(folder,
+            stringi::stri_split_fixed(
+              calc_name[length(calc_name)], '.xls')[[1]][1], 
+            '_LC', LC[i], '.xls')
+      }
       
       # update the output cells in the run_matrix data frame with the
       #   values from the specified output cells in the spreadsheet 
