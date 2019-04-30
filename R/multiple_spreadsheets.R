@@ -64,7 +64,7 @@ use_run_matrix <-
     }
     
     # add the load case column
-    run_matrix <- data.frame(c(NA, LC), run_matrix) %>%
+    run_matrix <- data.frame(LC = c(NA, LC), run_matrix) %>%
       as_tibble()
 
     # return the run_matrix file 
