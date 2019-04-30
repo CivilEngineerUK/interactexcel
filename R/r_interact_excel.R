@@ -1,4 +1,4 @@
-#' R_interact_Excel
+#' R_interact_excel
 #' 
 #' Allows a spreadsheet to be modified programatically and the 
 #'   outputs captured. Uses the \code{RDCOMClient}, \code{dplyr} and
@@ -18,6 +18,7 @@
 #' input_cells <- c('A1', 'A2')
 #' input_values = c(4, 9)
 #' output_cells = c('B1', 'B2')
+#' # ADD SAMPLE SPREADSHEET TO PACKAGE AND RUN CODE
 #' }
 #' @export
 update_spreadsheet <- 
@@ -45,22 +46,24 @@ update_spreadsheet <-
     sheet <- wb$Worksheets(sheet)
     
     # change the value of the input cells
-    for (i in 1:nrow(input)) {
-      id <- stringr::str_split(input_cells[i], '')[[1]]
-      cell <- sheet$cells( as.integer(id[2]), which(LETTERS == id[1]))
+    for (i in 1:length(input_cells)) {
+      alpha <- gsub('[[:digit:]]', '', input_cells[i])
+      num <- readr::parse_number(input_cells[i])
+      cell <- sheet$cells(num, which(LETTERS == alpha))
       cell[["Value"]] <- input_values[i]
     }
     
     # read outputs
     output <- c()
     for (i in 1:length(output_cells)) {
-      id <- stringr::str_split(output_cells[i], '')[[1]]
-      cell <- sheet$cells(as.integer(id[2]), which(LETTERS == id[1]))
+      alpha <- gsub('[[:digit:]]', '', output_cells[i])
+      num <- readr::parse_number(output_cells[i])
+      cell <- sheet$cells(num, which(LETTERS == alpha))
       output[i] <- cell[["Value"]]
     }
     
     if (!is.null(save_spreadsheet)) {
-      if (save_spreadsheet == ' ') {
+      if (save_spreadsheet == '') {
         wb$Save()
       } else {
         if (file.exists(save_spreadsheet)) {

@@ -7,9 +7,11 @@ Description: R package that enables the user to interact with calculations withi
   interactexcel change the values in specified cells within the spreadsheet and extract the values at 
   other specified cells. Can be used for Monte Carlo simulation, optimisation and sensitivity analysis.
 Depends: R (>= 3.5.1)
-License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 
     dplyr,
-    RDCOMClient (>= 0.93.0)
+    RDCOMClient (>= 0.93.0),
+    stringr,
+    readr
+License: GPL-3
