@@ -1,3 +1,28 @@
+run_spreadsheet <- 
+  function(run_matrix = NULL, 
+           file_location = NULL, 
+           sheet = 'Sheet1',
+           folder = 'results',
+           round_dp = 3) {
+    
+  tryCatch({
+    use_run_matrix(run_matrix, 
+                   file_location, 
+                   sheet,
+                   folder,
+                   round_dp)
+    
+  }, warning = function(warning_condition) {
+    unlink(folder, recursive = FALSE)
+    return(warning('The code has crashed'))
+    
+  }, error = function(error_condition) {
+    unlink(folder, recursive = FALSE)
+    return(stop('The code has crashed'))
+    
+  })
+}
+
 #' Multiple Spreadsheets
 #' 
 #' Make changes to a spreadsheet and extract the outputs from 
@@ -7,8 +32,6 @@
 #' @param file_location the full path of the calculation spreadsheet
 #' @param sheet the sheet in the spreadsheet in which you wish to change values
 #' @param folder the folder to save the results to
-#' @param save_location if \code{NULL} then the spreadsheets will not be saved but
-#'   the final results will be returned as a data frame still
 #' @param round_dp the number of significant figures to round to. Defaults to 3
 #' @export
 use_run_matrix <- 
@@ -17,12 +40,9 @@ use_run_matrix <-
     file_location = NULL, 
     sheet = 'Sheet1',
     folder = 'results',
-    save_location = NULL,
     round_dp = 3) {
     
-    library(RDCOMClient)
-    
-    folder <- check_folder(folder)
+    check_folder(folder)
     
     if (is.character(run_matrix)) {
       run_matrix <- readxl::read_excel(run_matrix)
@@ -49,20 +69,27 @@ use_run_matrix <-
     # run the code via a for loop
     for (i in 1:(nrow(run_matrix) - 1)) {  
       
-      # create name for calculation spreadsheet to be saved to
-      if (!is.null(save_location)) {
-        calc_name <- 
-          stringi::stri_split_fixed(
-            file_location,
-            '/')[[1]]
-        
-        calculation_name <- 
-          paste0(folder,
-            stringi::stri_split_fixed(
-              calc_name[length(calc_name)], '.xls')[[1]][1], 
-            '_LC', LC[i], '.xls')
-      }
+      # not save the results to a folder
+      if (is.null(folder)) {
+        calculation_name <- NULL
       
+        } else {
+      
+          # create name for calculation spreadsheet to be saved to
+          calc_name <- 
+            stringi::stri_split_fixed(
+              file_location,
+              '/')[[1]]
+          
+          calculation_name <- 
+            paste0(#paste0(calc_name[1:(length(calc_name) - 1)], collapse = '/'), '/', 
+                   folder, '/',
+                   stringi::stri_split_fixed(
+                     calc_name[length(calc_name)], '.xls')[[1]][1], 
+                   '_LC', LC[i], '.xls')
+      
+        }
+
       # update the output cells in the run_matrix data frame with the
       #   values from the specified output cells in the spreadsheet 
       run_matrix[i + 1, names(output_cells)] <- 
@@ -71,38 +98,13 @@ use_run_matrix <-
                            readr::parse_number(unlist(input_values[i, ])),
                            input_cells,
                            output_cells,
-                           calculation_name)[, 2], round_dp))
+                           save_spreadsheet = calculation_name)[, 2], round_dp))
     }
     
     # add the load case column
-    run_matrix <- data.frame(LC = c(NA, LC), run_matrix) %>%
-      as_tibble()
+    run_matrix <- data.frame(LC = c(NA, LC), run_matrix) 
 
     # return the run_matrix file 
     return(run_matrix)
   }
 
-#' Check Folder
-#' 
-#' Check whether a folder exists and if so whether it should be
-#'   overwritten.
-#'   
-#' @param folder a string with a folder name. Defaults to \code{NULL}
-check_folder <- function(folder = NULL) {
-  if (!is.null(folder)) {
-    if(dir.exists(folder)) {
-      ans <- readline(paste(folder, 'already exists. 
-                            Press:\n\n 1 to overwrite \n 2 stop program'))
-      if (ans == '1') {
-        dir.create(folder)
-        folder <- paste0(folder, '/')
-      } else {
-        stop(paste('Run aborted.', folder, 'not overwritten.'))
-      }
-    } else {
-      dir.create(folder)
-      folder <- paste0(folder, '/')
-    }
-  }
-  return(folder)
-}

@@ -73,11 +73,13 @@ update_spreadsheet <-
       }
     }
     
+    wb$Save()
     xlApp$Quit()  # close Excel
     
     # return output
     output <- dplyr::tibble(
       cells = output_cells,
       value = output)
+    
     return(output)
   }
