@@ -1,3 +1,14 @@
+#' Run Spreadsheets
+#' 
+#' Make changes to a spreadsheet and extract the outputs from 
+#'   specified cells using a run matrix as an input.
+#'
+#' @param run_matrix a file path to the input matrix OR the matrix itself
+#' @param file_location the full path of the calculation spreadsheet
+#' @param sheet the sheet in the spreadsheet in which you wish to change values
+#' @param folder the folder to save the results to
+#' @param round_dp the number of significant figures to round to. Defaults to 3
+#' @export
 run_spreadsheet <- 
   function(run_matrix = NULL, 
            file_location = NULL, 
@@ -6,11 +17,11 @@ run_spreadsheet <-
            round_dp = 3) {
     
   tryCatch({
-    use_run_matrix(run_matrix, 
+    return(use_run_matrix(run_matrix, 
                    file_location, 
                    sheet,
                    folder,
-                   round_dp)
+                   round_dp))
     
   }, warning = function(warning_condition) {
     unlink(folder, recursive = FALSE)

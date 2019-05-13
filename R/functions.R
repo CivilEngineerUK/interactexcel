@@ -18,3 +18,10 @@ check_folder <- function(folder = NULL) {
     folder <- paste0(folder, '/')
   }
 }
+
+
+.onLoad <- function(libname, pkgname) {
+  if (!'RDCOMClient' %in% installed.packages()) {
+    remotes::install_github('omegahat/RDCOMClient')
+  }
+}
