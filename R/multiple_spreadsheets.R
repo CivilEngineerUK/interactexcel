@@ -71,8 +71,8 @@ use_run_matrix <-
     cells <- run_matrix[1, ]
     
     # split into input and output cells
-    input_cells <- unlist(cells[, c(!is.na(run_matrix[3, ]))])
-    output_cells <- unlist(cells[, c(is.na(run_matrix[3, ]))])
+    input_cells <- unlist(cells[, c(!is.na(run_matrix[2, ]))])
+    output_cells <- unlist(cells[, c(is.na(run_matrix[2, ]))])
     
     # extract input cell values
     input_values <- run_matrix[2:nrow(run_matrix), names(input_cells)]

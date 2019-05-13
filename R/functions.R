@@ -20,8 +20,8 @@ check_folder <- function(folder = NULL) {
 }
 
 
-.onLoad <- function(libname, pkgname) {
-  if (!'RDCOMClient' %in% installed.packages()) {
-    remotes::install_github('omegahat/RDCOMClient')
-  }
-}
+# .onLoad <- function(libname, pkgname) {
+#   if (!'RDCOMClient' %in% utils::installed.packages()) {
+#     remotes::install_github('omegahat/RDCOMClient')
+#   }
+# }
