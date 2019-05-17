@@ -1,11 +1,12 @@
 Package: interactexcel
 Title: Interact with Excel Calculations
-Version: 0.0.0.9002
+Version: 0.0.0.9007
 Authors@R: person("Michael", "Rustell", email = "michael.rustel25@gmail.com", role = c("aut", "cre"))
 Description: R package that enables the user to interact with calculations within Excel spreadsheets such 
   as those commonly used in an engineering consultancy. The user can specify a run matrix and let 
   interactexcel change the values in specified cells within the spreadsheet and extract the values at 
-  other specified cells. Can be used for Monte Carlo simulation, optimisation and sensitivity analysis.
+  other specified cells. Can be used for running design cases, Monte Carlo simulation, optimisation and 
+  sensitivity analysis.
 Depends: R (>= 3.1)
 Encoding: UTF-8
 LazyData: true
@@ -18,4 +19,4 @@ Imports:
     stringi,
     RDCOMClient
 License: GPL-3
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

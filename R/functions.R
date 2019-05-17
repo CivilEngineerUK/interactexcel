@@ -19,9 +19,45 @@ check_folder <- function(folder = NULL) {
   }
 }
 
+#' Install RDCOMClient
+#' 
+#' Installs RDCOMClient from Github
+#' 
+#' @description RDCOMClient is a necessary package for the package to interact with 
+#'   Excel spreadsheets.
+#' @return thing
+#' @export
+install_RDCOMClient <- function() {
+  if (!'RDCOMClient' %in% utils::installed.packages()) {
+    remotes::install_github('omegahat/RDCOMClient')
+  }
+}
 
-# .onLoad <- function(libname, pkgname) {
-#   if (!'RDCOMClient' %in% utils::installed.packages()) {
-#     remotes::install_github('omegahat/RDCOMClient')
-#   }
-# }
+#' Read results
+#' 
+#' Read the results files that are in .csv format
+#' 
+#' @param folder_directory directory to search for folder. Defaults to \code{getwd()}
+#' @export
+read_results <- function(folder_directory = getwd()) {
+
+  # read the file names
+  file_names <- list.files(folder_directory)
+  
+  # read the files into a list
+  results <- lapply(file_names, function(x) read.csv(paste0(folder_directory, '/', x)))
+  
+  # name each memeber in the list
+  names(results) <- gsub('.csv', '', file_names)
+  
+  lapply(results, remove_top_row)
+}
+
+remove_top_row <- function(df) {
+  df %>%
+    slice(-1) %>%
+    apply(c(1, 2),
+          function(x)
+            readr::parse_number(readr::parse_character(x))) %>%
+    tibble::as_tibble()
+}
